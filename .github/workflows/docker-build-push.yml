@@ -1,0 +1,44 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - master 
+jobs:
+  build-and-push-backend:
+    name: Build and Push Backend Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push backend Docker image
+        env:
+          POSTGRES_HOST: emt-db
+        run: |
+          docker build -t angela27/emt-labs-backend:${{ github.run_number }} -f EMT-LAB_A/Dockerfile .
+          docker push angela27/emt-labs-backend:${{ github.run_number }}
+
+  build-and-push-frontend:
+    name: Build and Push Frontend Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push frontend Docker image
+        run: |
+          docker build -t angela27/emt-labs-frontend:${{ github.run_number }} -f frontend/Dockerfile .
+          docker push angela27/emt-labs-frontend:${{ github.run_number }}
