@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  emt-db:
+    image: "postgres:16"
+    container_name: "postgres-emt-db"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: books
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+  spring-boot-app:
+    build:
+      context: ./EMT-LAB_A
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - emt-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://emt-db:5432/books
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+
+  react-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - spring-boot-app
