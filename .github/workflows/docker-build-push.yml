@@ -17,7 +17,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql
-
+          
       - name: Start PostgreSQL Service
         run: sudo service postgresql start
 
@@ -31,15 +31,6 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'adopt'
-          java-package: 'jdk'
-          architecture: 'x64'
-          check-latest: false
-          server-id: 'github'
-          server-username: ${{ github.actor }}
-          server-password: ${{ github.token }}
-          overwrite-settings: true
-          job-status: 'success'
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -48,7 +39,7 @@ jobs:
 
       - name: Build Backend with Maven
         run: |
-          cd backend
+          cd EMT-LAB_A
           ./mvnw clean install -DskipTests=false
           cd ..
 
