@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Build and push image
 
 on:
   push:
@@ -42,13 +42,13 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build and tag backend Docker image
-        run: docker build -t $BACKEND_IMAGE:${{ github.run_number }} ./EMT-LAB_A
+        run: docker build -t $BACKEND_IMAGE:latest ./EMT-LAB_A
 
       - name: Build and tag frontend Docker image
-        run: docker build -t $FRONTEND_IMAGE:${{ github.run_number }} ./frontend
+        run: docker build -t $FRONTEND_IMAGE:latest ./frontend
 
       - name: Push backend Docker image
-        run: docker push $BACKEND_IMAGE:${{ github.run_number }}
+        run: docker push $BACKEND_IMAGE:latest
 
       - name: Push frontend Docker image
-        run: docker push $FRONTEND_IMAGE:${{ github.run_number }}
+        run: docker push $FRONTEND_IMAGE:latest
