@@ -1,44 +1,51 @@
-name: Build and Push Docker Images
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - master 
+      - master
+
 jobs:
-  build-and-push-backend:
-    name: Build and Push Backend Docker Image
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          java-version: '17'
 
-      - name: Build and push backend Docker image
-        env:
-          POSTGRES_HOST: emt-db
-        run: |
-          docker build -t angela27/emt-labs-backend:${{ github.run_number }} -f EMT-LAB_A/Dockerfile .
-          docker push angela27/emt-labs-backend:${{ github.run_number }}
-
-  build-and-push-frontend:
-    name: Build and Push Frontend Docker Image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          node-version: '18'
 
-      - name: Build and push frontend Docker image
+      - name: Build Backend with Maven
+        run: mvn clean package
+        working-directory: ./EMT-LAB_A
+
+      - name: Build Frontend with Yarn
         run: |
-          docker build -t angela27/emt-labs-frontend:${{ github.run_number }} -f frontend/Dockerfile .
-          docker push angela27/emt-labs-frontend:${{ github.run_number }}
+          yarn install
+          yarn build
+        working-directory: ./frontend
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build Docker image for Backend
+        run: docker build -t angela27/emt-labs-backend:${{ github.run_number }} .
+        working-directory: ./EMT-LAB_A
+
+      - name: Build Docker image for Frontend
+        run: docker build -t angela27/emt-labs-frontend:${{ github.run_number }} .
+        working-directory: ./frontend
+
+      - name: Push Docker image for Backend
+        run: docker push angela27/emt-labs-backend:${{ github.run_number }}
+
+      - name: Push Docker image for Frontend
+        run: docker push angela27/emt-labs-frontend:${{ github.run_number }}
