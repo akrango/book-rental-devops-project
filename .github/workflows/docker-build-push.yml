@@ -6,55 +6,73 @@ on:
       - master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17
+      - name: Install PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql
+
+      - name: Start PostgreSQL Service
+        run: sudo service postgresql start
+
+      - name: Create Database and User
+        run: |
+          sudo -u postgres psql -c "CREATE DATABASE mytestdb;"
+          sudo -u postgres psql -c "CREATE USER testuser WITH PASSWORD 'password';"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE mytestdb TO testuser;"
+
+      - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
-          java-version: '17'
-          distribution: 'adopt'
-          java-package: 'jdk'
-          architecture: 'x64'
-          check-latest: false
-          server-id: 'github'
-          server-username: ${{ github.actor }}
-          server-password: ${{ github.token }}
-          overwrite-settings: true
-          job-status: 'success'
-          
+          java-version: '11'
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '14'
 
       - name: Build Backend with Maven
-        run: mvn clean package
-        working-directory: ./EMT-LAB_A
+        run: |
+          cd backend
+          ./mvnw clean install -DskipTests=false
+          cd ..
 
       - name: Build Frontend with Yarn
         run: |
+          cd frontend
           yarn install
           yarn build
-        working-directory: ./frontend
+          cd ..
 
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker image for Backend
-        run: docker build -t angela27/emt-labs-backend:${{ github.run_number }} .
-        working-directory: ./EMT-LAB_A
+        run: docker build -t ${DOCKERHUB_USERNAME}/emt-labs-backend:latest ./EMT-LAB_A
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build Docker image for Frontend
-        run: docker build -t angela27/emt-labs-frontend:${{ github.run_number }} .
-        working-directory: ./frontend
+        run: docker build -t ${DOCKERHUB_USERNAME}/emt-labs-frontend:latest ./frontend
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Push Docker image for Backend
-        run: docker push angela27/emt-labs-backend:${{ github.run_number }}
+        run: docker push ${DOCKERHUB_USERNAME}/emt-labs-backend:latest
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Push Docker image for Frontend
-        run: docker push angela27/emt-labs-frontend:${{ github.run_number }}
+        run: docker push ${DOCKERHUB_USERNAME}/emt-labs-frontend:latest
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
