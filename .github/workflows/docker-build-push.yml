@@ -46,6 +46,12 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Make Maven Wrapper Executable
+        run: |
+          cd EMT-LAB_A
+          chmod +x mvnw
+          cd ..
+
       - name: Build Backend with Maven
         run: |
           cd EMT-LAB_A
