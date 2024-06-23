@@ -16,9 +16,10 @@
 #   namespace: emt-labs
 # spec:
 #   redirectRegex:
-#     regex: "^/spring-boot/(.*)"
+#     regex: "^/spring-boot"
 #     replacement: "/$1"
 #     permanent: true
+# ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
@@ -39,4 +40,5 @@ spec:
   stripPrefix:
     forceSlash: false
     prefixes:
+      - /spring-boot/*
       - /spring-boot
