@@ -42,3 +42,21 @@ spec:
     prefixes:
       - /spring-boot/*
       - /spring-boot
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: cors-middleware
+  namespace: emt-labs
+spec:
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "OPTIONS"
+      - "PUT"
+    accessControlAllowHeaders:
+      - "*"
+    accessControlAllowOriginList:
+      - "http://localhost:80/react"
+    accessControlMaxAge: 100
+    addVaryHeader: true

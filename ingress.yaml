@@ -38,7 +38,8 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
     traefik.ingress.kubernetes.io/router.middlewares: |
       emt-labs-rewrite-react@kubernetescrd,
-      emt-labs-rewrite-spring-boot@kubernetescrd
+      emt-labs-rewrite-spring-boot@kubernetescrd,
+      emt-labs-cors-middleware@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:
