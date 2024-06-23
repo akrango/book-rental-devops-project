@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-emt-db
+  namespace: emt-labs
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-emt-db
+  template:
+    metadata:
+      labels:
+        app: postgres-emt-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16
+        ports:
+        - containerPort: 5432
+          name: postgres
+        envFrom:
+        - configMapRef:
+            name: postgres-config
+        - secretRef:
+            name: postgres-secret
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data 
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+# apiVersion: apps/v1
+# kind: StatefulSet
+# metadata:
+#   name: emt-db
+#   namespace: emt-labs
+# spec:
+#   serviceName: "emt-db"
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: emt-db
+#   template:
+#     metadata:
+#       labels:
+#         app: emt-db
+#     spec:
+#       containers:
+#       - name: postgres
+#         image: postgres:latest
+#         ports:
+#         - containerPort: 5432
+#         env:
+#         - name: POSTGRES_DB
+#           value: books
+#         - name: POSTGRES_USER
+#           value: postgres
+#         - name: POSTGRES_PASSWORD
+#           value: admin
+#         volumeMounts:
+#         - name: postgres-data
+#           mountPath: /var/lib/postgresql/data
+#   volumeClaimTemplates:
+#   - metadata:
+#       name: postgres-data
+#     spec:
+#       accessModes: ["ReadWriteOnce"]
+#       resources:
+#         requests:
+#           storage: 1Gi

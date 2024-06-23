@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "kubernetes://schema/networking.k8s.io/v1@ingress": "file:///c%3A/Users/angel/Desktop/grupa%20A/ingress.yaml"
+    }
+}

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: emt-labs
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://emt-db:5432/books
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_DATASOURCE_PASSWORD: admin

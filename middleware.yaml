@@ -1,0 +1,42 @@
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: rewrite-react
+#   namespace: emt-labs
+# spec:
+#   redirectRegex:
+#     regex: "^/react/(.*)"
+#     replacement: "/$1"
+#     permanent: true
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: rewrite-spring-boot
+#   namespace: emt-labs
+# spec:
+#   redirectRegex:
+#     regex: "^/spring-boot/(.*)"
+#     replacement: "/$1"
+#     permanent: true
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: rewrite-react
+  namespace: emt-labs
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - /react
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: rewrite-spring-boot
+  namespace: emt-labs
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - /spring-boot
