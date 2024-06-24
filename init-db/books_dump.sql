@@ -194,3 +194,6 @@ ALTER TABLE ONLY public.author
 -- PostgreSQL database dump complete
 --
 
+INSERT INTO country (name, continent) VALUES ('Macedonia', 'Europe'), ('Germany', 'Europe');
+INSERT INTO author (name, surname, country_id) VALUES ('John', 'Doe', 1), ('Jane', 'Smith', 2);
+INSERT INTO book (name, category, available_copies, author_id) VALUES ('Book One', 'THRILLER', 10, 1), ('Book Two', 'HISTORY', 5, 2);
