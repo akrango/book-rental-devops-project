@@ -2,7 +2,7 @@ version: '3.8'
 services:
   emt-db:
     image: "postgres:16"
-    container_name: "postgres-emt-db"
+    container_name: "emt-db"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
@@ -11,6 +11,18 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - emt-db
 
   spring-boot-app:
     build:
@@ -33,3 +45,6 @@ services:
       - "3000:80"
     depends_on:
       - spring-boot-app
+
+volumes:
+  postgres_data:

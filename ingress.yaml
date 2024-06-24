@@ -53,7 +53,7 @@ spec:
                 name: react-app-service
                 port:
                   number: 80
-          - path: /spring-boot
+          - path: /
             pathType: Prefix
             backend:
               service:

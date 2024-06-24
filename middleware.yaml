@@ -1,25 +1,3 @@
-# apiVersion: traefik.containo.us/v1alpha1
-# kind: Middleware
-# metadata:
-#   name: rewrite-react
-#   namespace: emt-labs
-# spec:
-#   redirectRegex:
-#     regex: "^/react/(.*)"
-#     replacement: "/$1"
-#     permanent: true
-# ---
-# apiVersion: traefik.containo.us/v1alpha1
-# kind: Middleware
-# metadata:
-#   name: rewrite-spring-boot
-#   namespace: emt-labs
-# spec:
-#   redirectRegex:
-#     regex: "^/spring-boot"
-#     replacement: "/$1"
-#     permanent: true
-# ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
@@ -50,13 +28,13 @@ metadata:
   namespace: emt-labs
 spec:
   headers:
+    accessControlAllowOriginList:
+      - "*"
     accessControlAllowMethods:
       - "GET"
-      - "OPTIONS"
+      - "POST"
       - "PUT"
+      - "DELETE"
     accessControlAllowHeaders:
-      - "*"
-    accessControlAllowOriginList:
-      - "http://localhost:80/react"
-    accessControlMaxAge: 100
-    addVaryHeader: true
+      - "Content-Type"
+    accessControlAllowCredentials: true
