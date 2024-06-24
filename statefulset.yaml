@@ -37,6 +37,43 @@
 #         requests:
 #           storage: 1Gi
 
+# apiVersion: apps/v1
+# kind: StatefulSet
+# metadata:
+#   name: emt-db
+#   namespace: emt-labs
+# spec:
+#   serviceName: "emt-db"
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: emt-db
+#   template:
+#     metadata:
+#       labels:
+#         app: emt-db
+#     spec:
+#       containers:
+#       - name: postgres
+#         image: postgres:latest
+#         ports:
+#         - containerPort: 5432
+#         envFrom:
+#         - configMapRef:
+#             name: postgres-config
+#         - secretRef:
+#             name: postgres-secret
+#         volumeMounts:
+#         - name: postgres-data
+#           mountPath: /var/lib/postgresql/data
+#   volumeClaimTemplates:
+#   - metadata:
+#       name: postgres-data
+#     spec:
+#       accessModes: ["ReadWriteOnce"]
+#       resources:
+#         requests:
+#           storage: 1Gi
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -55,17 +92,36 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:latest
+        image: postgres:16
         ports:
         - containerPort: 5432
-        envFrom:
-        - configMapRef:
-            name: postgres-config
-        - secretRef:
-            name: postgres-secret
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
         volumeMounts:
         - name: postgres-data
           mountPath: /var/lib/postgresql/data
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d/init-script.sql
+          subPath: books_dump.sql
+          readOnly: true
+      volumes:
+      - name: init-script
+        configMap:
+          name: postgres-initdb
   volumeClaimTemplates:
   - metadata:
       name: postgres-data
@@ -74,3 +130,7 @@ spec:
       resources:
         requests:
           storage: 1Gi
+
+
+  
+
