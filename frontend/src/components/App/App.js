@@ -26,7 +26,8 @@ class App extends Component {
     render() {
         return (
 
-            <Router>
+            // <Router>
+            <Router basename="/react">
                 <Header />
                 <main>
                     <div className="container">
