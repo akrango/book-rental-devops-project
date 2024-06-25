@@ -13,16 +13,16 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
       - ./books_dump.sql:/docker-entrypoint-initdb.d/books_dump.sql
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "8081:80"
-    depends_on:
-      - emt-db
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   ports:
+  #     - "8081:80"
+  #   depends_on:
+  #     - emt-db
 
   spring-boot-app:
     build:
