@@ -12,18 +12,6 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: rewrite-spring-boot
-  namespace: emt-labs
-spec:
-  stripPrefix:
-    forceSlash: false
-    prefixes:
-      - /spring-boot/*
-      - /spring-boot
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
   name: cors-middleware
   namespace: emt-labs
 spec:
